@@ -1,20 +1,35 @@
 //https://fcctop100.herokuapp.com/api/fccusers/top/alltime.
-class Main extends React.Component{
-    constructor(prop){
-      super(prop);
-      this.state = {
+class Main extends React.Component {
+    constructor(prop) {
+        super(prop);
+        this.state = {
             leaders: []
         };
     }
 
-    componentDidMount(){
-        getLeaders(recentTop).then(this.setState({leaders: leaderData}));      
+    componentDidMount() {
+        this.getLeaders();
+    }
+    getLeaders() {
+        $.ajax({
+            url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
+            dataType: 'json',
+            cache: false,
+            success: function(data){
+                var users = data;
+                this.setState({leaders: users});
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.log("a");
+            }.bind(this)
+        });
     }
 
-    render(){
-        const listLeaders = this.state.leaders.map((x)=> <li>{x}</li>);
-        return(
-            
+    render() {
+        const listLeaders = this.state.leaders;
+        console.log(this.state.leaders);
+        return (
+
             <div>
                 <ul>{listLeaders}</ul>
             </div>
@@ -27,8 +42,8 @@ ReactDOM.render(
     document.getElementById('root')
 )
 
-class Row extends React.Component{
-    constructor(prop){
+class Row extends React.Component {
+    constructor(prop) {
         super(prop)
         this.state = {
             number: this.number,
@@ -41,13 +56,3 @@ class Row extends React.Component{
 
 var leaderData = [];
 const recentTop = "https://fcctop100.herokuapp.com/api/fccusers/top/recent"
-
-function getLeaders(dataUrl){
-    return new Promise(function (resolve,reject){
-        $.ajax({
-            url: dataUrl,
-            type: 'GET',
-            dataType: 'json'
-        }).done((data)=>{leaders = data;}).fail(reject);
-    });
-}
