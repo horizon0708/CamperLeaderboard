@@ -1,18 +1,33 @@
+
 //https://fcctop100.herokuapp.com/api/fccusers/top/alltime.
+// User Story: I can see a table of the freeCodeCamp campers who've earned the most brownie points in the past 30 days.
+// User Story: I can see how many brownie points they've earned in the past 30 days, and how many they've earned total.
+// User Story: I can toggle between sorting the list by how many brownie points they've earned in the past 30 days and by how many brownie points they've earned total.
 class Main extends React.Component {
     constructor(prop) {
         super(prop);
         this.state = {
-            leaders: []
+            leaders: [],
+            sorter: "recent"
         };
     }
-
     componentDidMount() {
         this.getLeaders();
     }
-    getLeaders() {
+
+    toggleSortTo(string){
+        console.log("toggle!");
+        if (this.state.leaders === "recent" && string === "alltime"){
+            this.setState("alltime");
+        }
+        if (this.state.leaders === "alltime" && string === "recent"){
+            this.setState("alltime");
+        }  
+    }
+
+    getLeaders(sorter) {
         $.ajax({
-            url: "https://fcctop100.herokuapp.com/api/fccusers/top/recent",
+            url: "https://fcctop100.herokuapp.com/api/fccusers/top/" + this.state.sorter,
             dataType: 'json',
             cache: false,
             success: function(data){
@@ -24,12 +39,9 @@ class Main extends React.Component {
             }.bind(this)
         });
     }
-
     render() {
-        const toaster = [0,1,2,3,4]
-
         return (                       
-            <LeaderList leaders={this.state.leaders} />
+            <LeaderList leaders={this.state.leaders} allTime={this.toggleSortTo('alltime')} recent={this.toggleSortTo('recent')} />
         );
     }
 }
@@ -41,54 +53,29 @@ ReactDOM.render(
 
 function LeaderList(props){
     const leaders = props.leaders;
-    const listItems = leaders.map((number)=>
-        <li>{number.username}</li>
+    const allTime= props.alltime;
+    const recent = props.recent
+    const listItems = leaders.map((number, index)=>
+        {
+        return <tr>
+            <td>{index + 1}</td> 
+            <td>{number.username}</td> 
+            <td><img src={number.img} className="user-image"/></td>
+            <td>{number.alltime}</td>
+            <td>{number.recent}</td>
+            </tr>
+        }
     );
     return(
-        <ul>{listItems}</ul>
+        <table className="user-table">
+            <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Pic</th>
+                <th onClick={console.log("click")}>All time</th>
+                <th onClick={recent}>Recent</th>
+            </tr>
+            {listItems}
+            </table>
     );
 }
-
-
-class Row extends React.Component {
-    constructor(prop) {
-        super(prop)
-        this.state = {
-            username: '',
-            img: '',
-            alltime: '',
-            recent: '',
-            lastUpdate: ''
-        }
-    }
-
-    // populateRow(prop){
-    //     setState({
-    //         username: prop.username,
-    //         img: prop.img,
-    //         alltime: prop.alltime,
-    //         recent: prop.recent,
-    //         lastUpdate: prop.lastUpdate
-    //     }
-    //     );
-    // }
-
-    render(){
-        const username = this.props.username;
-        const img = this.props.img;
-        const alltime = this.props.alltime;
-        const recent = this.props.recent;
-        const lastUpdate = this.props.lastUpdate;
-        return(
-            <div>
-                {username} {alltime}
-            </div>
-        );
-    }
-}
-
-
-
-
-var leaderData = [];
-const recentTop = "https://fcctop100.herokuapp.com/api/fccusers/top/recent"
