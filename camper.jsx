@@ -26,13 +26,10 @@ class Main extends React.Component {
     }
 
     render() {
-        const listLeaders = this.state.leaders;
-        console.log(this.state.leaders);
-        return (
+        const toaster = [0,1,2,3,4]
 
-            <div>
-                <ul>{listLeaders}</ul>
-            </div>
+        return (                       
+            <LeaderList leaders={this.state.leaders} />
         );
     }
 }
@@ -42,15 +39,54 @@ ReactDOM.render(
     document.getElementById('root')
 )
 
+function LeaderList(props){
+    const leaders = props.leaders;
+    const listItems = leaders.map((number)=>
+        <li>{number.username}</li>
+    );
+    return(
+        <ul>{listItems}</ul>
+    );
+}
+
+
 class Row extends React.Component {
     constructor(prop) {
         super(prop)
         this.state = {
-            number: this.number,
-            name: this.name,
+            username: '',
+            img: '',
+            alltime: '',
+            recent: '',
+            lastUpdate: ''
         }
     }
+
+    // populateRow(prop){
+    //     setState({
+    //         username: prop.username,
+    //         img: prop.img,
+    //         alltime: prop.alltime,
+    //         recent: prop.recent,
+    //         lastUpdate: prop.lastUpdate
+    //     }
+    //     );
+    // }
+
+    render(){
+        const username = this.props.username;
+        const img = this.props.img;
+        const alltime = this.props.alltime;
+        const recent = this.props.recent;
+        const lastUpdate = this.props.lastUpdate;
+        return(
+            <div>
+                {username} {alltime}
+            </div>
+        );
+    }
 }
+
 
 
 
